@@ -9,18 +9,36 @@
 ## be sorted in alphabetical order and the first hospital in that set should be chosen (i.e. if hospitals \b", \c",
 ## and \f" are tied for best, then hospital \b" should be returned).
 
+## definition of function and its arguments
 best <- function(state, outcome) {
-  df <- read.csv('datasets/outcome-of-care-measures.csv',na.strings 
+  
+  # read outcome-of-care-measures.csv
+  df <- read.csv('outcome-of-care-measures.csv',na.strings 
                  = 'Not Available', stringsAsFactors= FALSE )
+  
+  # check the validity of function's arguments 
+  
   if (!(state %in% unique(df[,7]))) {
     stop('invalid state')
   } else if (!(outcome %in% c('heart attack','heart failure', 'pneumonia'))) {
     stop('invalid outcome')
   }
+  
+  
   outcomes <- c('heart attack' = 11, 'heart failure'= 17, 'pneumonia'= 23)
+  
+  # Subletting main dataframe based on function's arguments
   df_subset <- df [which(df$State == state),c(2,7,outcomes[[outcome]])]
+  
+  # Assigning new column names
   colnames(df_subset) <- c('Name', 'State', 'Outcome')
+  
+  # Removing NA value
   df_subset <- na.omit(df_subset)
+  
+  # Order data.frame based on Outcome and Name
   orderedData <- df_subset[order(df_subset$Outcome,df_subset$Name, decreasing = TRUE),]
+  
+  # Return last row
   return(orderedData[nrow (orderedData),1])
 }
